@@ -30,3 +30,11 @@ class FilterResult:
     findings: list[Finding] = field(default_factory=list)
     blocked: bool = False
     message: str = ""
+
+
+@dataclass
+class Rule:
+    rule_id: str
+    category: str
+    severity: Severity
+    pattern: str
