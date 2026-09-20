@@ -61,4 +61,22 @@ def test_output_filter_detects_secret():
         assert result.action == Action.ALLOW
         assert result.findings == []
 
-        
+
+def test_output_filter_neutralizes_medium_severity_match():
+    rule = Rule(
+        rule_id="SEC002",
+        category="credential_leak",
+        severity=Severity.MEDIUM,
+        pattern=r"api_key=abc123",
+        scope="output",
+    )
+
+    rule_engine = RuleEngine([rule])
+    policy_manager = PolicyManager()
+    output_filter = OutputFilter(rule_engine, policy_manager)
+
+    result = output_filter.validate("The secret is api_key=abc123.")
+
+    assert result.action == Action.NEUTRALIZE
+    assert result.content == "The secret is [REDACTED_SECRET]."
+    assert result.blocked is False    
