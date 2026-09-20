@@ -1,0 +1,52 @@
+{
+  "rules": [
+    {
+      "id": "PI-001",
+      "name": "Ignore previous instructions",
+      "scope": "input",
+      "category": "prompt_injection",
+      "severity": "high",
+      "pattern": "(?i)ignore\\s+(all\\s+)?previous\\s+instructions"
+    },
+    {
+      "id": "PI-002",
+      "name": "Reveal system prompt",
+      "scope": "input",
+      "category": "prompt_injection",
+      "severity": "high",
+      "pattern": "(?i)(reveal|show|print|display)\\s+(the\\s+)?(system\\s+prompt|hidden\\s+instructions)"
+    },
+    {
+      "id": "PI-003",
+      "name": "Instruction override attempt",
+      "scope": "input",
+      "category": "prompt_injection",
+      "severity": "medium",
+      "pattern": "(?i)(you\\s+are\\s+now|act\\s+as|developer\\s+mode|jailbreak)"
+    },
+    {
+      "id": "SEC-001",
+      "name": "API key exposure",
+      "scope": "output",
+      "category": "credential_leak",
+      "severity": "high",
+      "pattern": "(?i)(api[_-]?key|secret[_-]?key|access[_-]?token)\\s*[:=]\\s*['\\\"]?[A-Za-z0-9_\\-]{16,}"
+    },
+    {
+      "id": "SEC-002",
+      "name": "Bearer token exposure",
+      "scope": "output",
+      "category": "credential_leak",
+      "severity": "high",
+      "pattern": "(?i)bearer\\s+[A-Za-z0-9_\\-\\.]{20,}"
+    },
+    {
+      "id": "SEC-003",
+      "name": "Password exposure",
+      "scope": "output",
+      "category": "credential_leak",
+      "severity": "medium",
+      "pattern": "(?i)(password|passwd|pwd)\\s*[:=]\\s*['\\\"]?[^\\s'\\\"]{6,}"
+    }
+  ]
+}

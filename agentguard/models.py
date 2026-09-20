@@ -38,3 +38,5 @@ class Rule:
     category: str
     severity: Severity
     pattern: str
+    scope: str = "both"
+    name: str = ""
