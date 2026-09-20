@@ -44,3 +44,24 @@ def test_input_filter_blocks_high_severity_match():
     assert result.blocked is True
     assert len(result.findings) == 1
     assert result.findings[0].rule_id == "PI001"
+
+
+    def test_input_filter_ignores_output_scoped_rules():
+        rule = Rule(
+            rule_id="SEC001",
+            category="credential_leak",
+            severity=Severity.HIGH,
+            pattern=r"secret\s*=",
+            scope="output",
+        )
+
+        rule_engine = RuleEngine([rule])
+        policy_manager = PolicyManager()
+        input_filter = InputFilter(rule_engine, policy_manager)
+
+        result = input_filter.validate("secret = abc123")
+
+        assert result.action == Action.ALLOW
+        assert result.findings == []
+
+    
