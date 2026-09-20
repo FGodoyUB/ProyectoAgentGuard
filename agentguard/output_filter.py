@@ -13,7 +13,7 @@ class OutputFilter:
         self.policy_manager = policy_manager
 
     def validate(self, text: str) -> FilterResult:
-        findings = self.rule_engine.evaluate(text)
+        findings = self.rule_engine.evaluate(text, scope="output")
         action = self.policy_manager.decide(findings)
 
         return FilterResult(
