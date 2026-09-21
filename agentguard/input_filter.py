@@ -15,13 +15,23 @@ class InputFilter:
         action = self.policy_manager.decide(findings)
 
         content = text
+        message = ""
+
+        if action == Action.WARN:
+            message = "Entrada permitida con advertencias."
 
         if action == Action.NEUTRALIZE:
             content = self.neutralizer.neutralize(text, findings)
+            message = "Entrada neutralizada por política de seguridad."
+
+        if action == Action.BLOCK:
+            content = None
+            message = "Entrada bloqueada por política de seguridad."
 
         return FilterResult(
             action=action,
             content=content,
             findings=findings,
             blocked=action == Action.BLOCK,
+            message=message,
         )

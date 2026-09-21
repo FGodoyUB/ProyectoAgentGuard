@@ -14,13 +14,23 @@ class OutputFilter:
         action = self.policy_manager.decide(findings)
 
         content = text
+        message = ""
+
+        if action == Action.WARN:
+            message = "Salida permitida con advertencias."
 
         if action == Action.NEUTRALIZE:
             content = self.neutralizer.neutralize(text, findings)
+            message = "Salida neutralizada por política de seguridad."
+
+        if action == Action.BLOCK:
+            content = None
+            message = "Salida bloqueada por política de seguridad."
 
         return FilterResult(
             action=action,
             content=content,
             findings=findings,
             blocked=action == Action.BLOCK,
+            message=message,
         )

@@ -80,3 +80,24 @@ def test_output_filter_neutralizes_medium_severity_match():
     assert result.action == Action.NEUTRALIZE
     assert result.content == "The secret is [REDACTED_SECRET]."
     assert result.blocked is False    
+
+
+def test_output_filter_removes_content_when_blocked():
+    rule = Rule(
+        rule_id="SEC001",
+        category="credential_leak",
+        severity=Severity.HIGH,
+        pattern=r"api_key=abc123",
+        scope="output",
+    )
+
+    rule_engine = RuleEngine([rule])
+    policy_manager = PolicyManager()
+    output_filter = OutputFilter(rule_engine, policy_manager)
+
+    result = output_filter.validate("The API key is api_key=abc123.")
+
+    assert result.action == Action.BLOCK
+    assert result.blocked is True
+    assert result.content is None
+    assert result.message == "Salida bloqueada por política de seguridad."
