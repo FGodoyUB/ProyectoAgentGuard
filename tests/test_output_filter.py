@@ -2,6 +2,7 @@ from agentguard.output_filter import OutputFilter
 from agentguard.models import Action, Rule, Severity
 from agentguard.policies import PolicyManager
 from agentguard.rules import RuleEngine
+from agentguard.logger import SecurityLogger
 
 
 def test_output_filter_allows_safe_text():
@@ -101,3 +102,25 @@ def test_output_filter_removes_content_when_blocked():
     assert result.blocked is True
     assert result.content is None
     assert result.message == "Salida bloqueada por política de seguridad."
+
+
+def test_output_filter_logs_block_event(tmp_path):
+    log_file = tmp_path / "agentguard.log"
+    logger = SecurityLogger(log_file)
+
+    rule = Rule(
+        rule_id="SEC001",
+        category="credential_leak",
+        severity=Severity.HIGH,
+        pattern=r"api_key=abc123",
+        scope="output",
+    )
+
+    rule_engine = RuleEngine([rule])
+    policy_manager = PolicyManager()
+    output_filter = OutputFilter(rule_engine, policy_manager, logger=logger)
+
+    output_filter.validate("The API key is api_key=abc123.")
+
+    assert log_file.exists()
+    assert "output_filter" in log_file.read_text(encoding="utf-8")

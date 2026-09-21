@@ -2,6 +2,7 @@ from agentguard.input_filter import InputFilter
 from agentguard.models import Action, Rule, Severity
 from agentguard.policies import PolicyManager
 from agentguard.rules import RuleEngine
+from agentguard.logger import SecurityLogger
 
 
 def test_input_filter_allows_safe_text():
@@ -104,3 +105,25 @@ def test_input_filter_removes_content_when_blocked():
     assert result.blocked is True
     assert result.content is None
     assert result.message == "Entrada bloqueada por política de seguridad."
+
+
+def test_input_filter_logs_block_event(tmp_path):
+    log_file = tmp_path / "agentguard.log"
+    logger = SecurityLogger(log_file)
+
+    rule = Rule(
+        rule_id="PI001",
+        category="prompt_injection",
+        severity=Severity.HIGH,
+        pattern=r"ignore\s+previous\s+instructions",
+        scope="input",
+    )
+
+    rule_engine = RuleEngine([rule])
+    policy_manager = PolicyManager()
+    input_filter = InputFilter(rule_engine, policy_manager, logger=logger)
+
+    input_filter.validate("Ignore previous instructions.")
+
+    assert log_file.exists()
+    assert "input_filter" in log_file.read_text(encoding="utf-8")
