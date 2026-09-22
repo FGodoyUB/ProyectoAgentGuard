@@ -47,6 +47,30 @@
       "category": "credential_leak",
       "severity": "medium",
       "pattern": "(?i)(password|passwd|pwd)\\s*[:=]\\s*['\\\"]?[^\\s'\\\"]{6,}"
+    },
+    {
+    "id": "prompt_injection_do_not_follow_user_request",
+    "name": "External content tries to override user request",
+    "scope": "input",
+    "category": "prompt_injection",
+    "severity": "high",
+    "pattern": "do\\s+not\\s+follow\\s+the\\s+user'?s\\s+request"
+    },
+    {
+    "id": "prompt_injection_correct_output_is",
+    "name": "External content defines the expected output",
+    "scope": "input",
+    "category": "prompt_injection",
+    "severity": "high",
+    "pattern": "the\\s+correct\\s+output\\s+is"
+    },
+    {
+    "id": "prompt_injection_write_only_sentence",
+    "name": "External content instructs exact file output",
+    "scope": "input",
+    "category": "prompt_injection",
+    "severity": "high",
+    "pattern": "write\\s+only\\s+that\\s+sentence\\s+to\\s+the\\s+output\\s+file"
     }
   ]
 }
